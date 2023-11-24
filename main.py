@@ -4,11 +4,20 @@ import sys
 from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
+from aecf import addEditCoffeeForm
+
 
 class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('main.ui', self)
+        self.read()
+        self.add_b.clicked.connect(self.add_l)
+
+    def add_l(self):
+        self.a = addEditCoffeeForm()
+        self.a.show()
+        self.a.exec_()
         self.read()
 
     def read(self):
