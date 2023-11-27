@@ -1,23 +1,23 @@
 import sqlite3
 import sys
 
-from PyQt5 import uic, QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
-
+from main_ui import Ui_MainWindow
 from aecf import addEditCoffeeForm
 
 
-class MyWindow(QMainWindow):
+class MyWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('main.ui', self)
+        self.setupUi(self)
         self.read()
         self.add_b.clicked.connect(self.add_l)
         self.change_b.clicked.connect(self.change_l)
 
     def change_l(self):
         if self.name_l.text():
-            con = sqlite3.connect('coffee.sqlite')
+            con = sqlite3.connect('data/coffee.sqlite')
             cur = con.cursor()
             result = cur.execute("SELECT sort_name FROM coffees "
                                  "WHERE sort_name = ?", [self.name_l.text()]).fetchall()
@@ -34,7 +34,7 @@ class MyWindow(QMainWindow):
 
     def add_l(self):
         if self.name_l.text():
-            con = sqlite3.connect('coffee.sqlite')
+            con = sqlite3.connect('data/coffee.sqlite')
             cur = con.cursor()
             result = cur.execute("SELECT sort_name FROM coffees").fetchall()
             con.close()
@@ -48,7 +48,7 @@ class MyWindow(QMainWindow):
         else:
             self.statusBar().showMessage('Введите название', 15000)
     def read(self):
-        con = sqlite3.connect('coffee.sqlite')
+        con = sqlite3.connect('data/coffee.sqlite')
         cur = con.cursor()
         result = cur.execute("SELECT * FROM coffees").fetchall()
 

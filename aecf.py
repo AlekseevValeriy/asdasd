@@ -1,19 +1,18 @@
 import sqlite3
 
-from PyQt5 import uic
 from PyQt5.QtWidgets import QDialog
+from addEditCoffeeForm import Ui_Dialog
 
-
-class addEditCoffeeForm(QDialog):
+class addEditCoffeeForm(QDialog, Ui_Dialog):
     def __init__(self, name, status):
         super().__init__()
-        uic.loadUi('addEditCoffeeForm.ui', self)
+        self.setupUi(self)
         self.name = name
         self.l1.setText(self.name)
         if status == 'add':
             self.pushButton.clicked.connect(self.add)
         elif status == 'change':
-            con = sqlite3.connect('coffee.sqlite')
+            con = sqlite3.connect('data/coffee.sqlite')
             cur = con.cursor()
             result = cur.execute("SELECT degree_roasting, condition, taste, price, volume FROM coffees "
                                  "WHERE sort_name = ?", [self.name]).fetchall()
@@ -31,7 +30,7 @@ class addEditCoffeeForm(QDialog):
         try:
             if not any([n.isdigit() for n in (lic[-1], lic[-2])]):
                 raise TypeError
-            con = sqlite3.connect('coffee.sqlite')
+            con = sqlite3.connect('data/coffee.sqlite')
             cur = con.cursor()
             command = ("INSERT INTO coffees(sort_name, degree_roasting, condition, taste, price, volume) "
                        "VALUES (?, ?, ?, ?, ?, ?)")
@@ -52,7 +51,7 @@ class addEditCoffeeForm(QDialog):
         try:
             if not any([n.isdigit() for n in (lic[-1], lic[-2])]):
                 raise TypeError
-            con = sqlite3.connect('coffee.sqlite')
+            con = sqlite3.connect('data/coffee.sqlite')
             cur = con.cursor()
             command = ("UPDATE coffees "
                        "SET sort_name = ?, degree_roasting = ?, condition = ?, taste = ?, price = ?, volume = ?"
