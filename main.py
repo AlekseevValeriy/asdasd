@@ -13,13 +13,40 @@ class MyWindow(QMainWindow):
         uic.loadUi('main.ui', self)
         self.read()
         self.add_b.clicked.connect(self.add_l)
+        self.change_b.clicked.connect(self.change_l)
+
+    def change_l(self):
+        if self.name_l.text():
+            con = sqlite3.connect('coffee.sqlite')
+            cur = con.cursor()
+            result = cur.execute("SELECT sort_name FROM coffees "
+                                 "WHERE sort_name = ?", [self.name_l.text()]).fetchall()
+            con.close()
+            if result:
+                self.a = addEditCoffeeForm(self.name_l.text(), 'change')
+                self.a.show()
+                self.a.exec_()
+                self.read()
+            else:
+                self.statusBar().showMessage('Такого сорта нет в базе данных', 15000)
+        else:
+            self.statusBar().showMessage('Введите название', 15000)
 
     def add_l(self):
-        self.a = addEditCoffeeForm()
-        self.a.show()
-        self.a.exec_()
-        self.read()
-
+        if self.name_l.text():
+            con = sqlite3.connect('coffee.sqlite')
+            cur = con.cursor()
+            result = cur.execute("SELECT sort_name FROM coffees").fetchall()
+            con.close()
+            if self.name_l.text() not in list(map(lambda a: a[0], result)):
+                self.a = addEditCoffeeForm(self.name_l.text(), 'add')
+                self.a.show()
+                self.a.exec_()
+                self.read()
+            else:
+                self.statusBar().showMessage('Такой сорт уже есть в базе данных', 15000)
+        else:
+            self.statusBar().showMessage('Введите название', 15000)
     def read(self):
         con = sqlite3.connect('coffee.sqlite')
         cur = con.cursor()
